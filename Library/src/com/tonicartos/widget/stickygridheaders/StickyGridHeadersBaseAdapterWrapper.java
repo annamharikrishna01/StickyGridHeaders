@@ -18,6 +18,8 @@ package com.tonicartos.widget.stickygridheaders;
 
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -185,9 +187,9 @@ public class StickyGridHeadersBaseAdapterWrapper extends BaseAdapter {
             mLastHeaderViewSeen = v;
             mLastViewSeen = null;
         } else if (adapterPosition.mPosition == POSITION_HEADER_FILLER) {
-            convertView = getFillerView(convertView, parent, mLastHeaderViewSeen);
+            convertView = getFillerView(convertView, parent, mLastHeaderViewSeen, Color.BLUE);
         } else if (adapterPosition.mPosition == POSITION_FILLER) {
-            convertView = getFillerView(convertView, parent, mLastViewSeen);
+            convertView = getFillerView(convertView, parent, mLastViewSeen, Color.GREEN);
         } else {
             convertView = mDelegate.getView(adapterPosition.mPosition, convertView, parent);
             mLastHeaderViewSeen = null;
@@ -248,10 +250,10 @@ public class StickyGridHeadersBaseAdapterWrapper extends BaseAdapter {
         mDelegate.unregisterDataSetObserver(observer);
     }
 
-    private FillerView getFillerView(View convertView, ViewGroup parent, View lastViewSeen) {
+    private FillerView getFillerView(View convertView, ViewGroup parent, View lastViewSeen, int color) {
         FillerView fillerView = (FillerView)convertView;
         if (fillerView == null) {
-            fillerView = new FillerView(mContext);
+            fillerView = new FillerView(mContext, color);
         }
 
         fillerView.setMeasureTarget(lastViewSeen);
@@ -365,9 +367,11 @@ public class StickyGridHeadersBaseAdapterWrapper extends BaseAdapter {
      */
     protected class FillerView extends View {
         private View mMeasureTarget;
+        private int mColor;
 
-        public FillerView(Context context) {
+        public FillerView(Context context, int color) {
             super(context);
+            mColor = color;
         }
 
         public FillerView(Context context, AttributeSet attrs) {
@@ -380,6 +384,12 @@ public class StickyGridHeadersBaseAdapterWrapper extends BaseAdapter {
 
         public void setMeasureTarget(View lastViewSeen) {
             mMeasureTarget = lastViewSeen;
+        }
+        
+        @Override
+        protected void onDraw(Canvas canvas) {
+            super.onDraw(canvas);
+            canvas.drawColor(mColor);
         }
 
         @Override
