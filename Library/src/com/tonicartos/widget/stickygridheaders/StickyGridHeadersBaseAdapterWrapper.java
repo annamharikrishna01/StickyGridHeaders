@@ -195,7 +195,7 @@ public class StickyGridHeadersBaseAdapterWrapper extends BaseAdapter {
             mLastHeaderViewSeen = null;
             mLastViewSeen = convertView;
         }
-        
+
         Log.d("getView", "Position: " + position + ", Kind: " + adapterPosition.mPosition);
 
         return convertView;
@@ -250,7 +250,8 @@ public class StickyGridHeadersBaseAdapterWrapper extends BaseAdapter {
         mDelegate.unregisterDataSetObserver(observer);
     }
 
-    private FillerView getFillerView(View convertView, ViewGroup parent, View lastViewSeen, int color) {
+    private FillerView getFillerView(View convertView, ViewGroup parent, View lastViewSeen,
+            int color) {
         FillerView fillerView = (FillerView)convertView;
         if (fillerView == null) {
             fillerView = new FillerView(mContext, color);
@@ -367,6 +368,7 @@ public class StickyGridHeadersBaseAdapterWrapper extends BaseAdapter {
      */
     protected class FillerView extends View {
         private View mMeasureTarget;
+
         private int mColor;
 
         public FillerView(Context context, int color) {
@@ -385,7 +387,7 @@ public class StickyGridHeadersBaseAdapterWrapper extends BaseAdapter {
         public void setMeasureTarget(View lastViewSeen) {
             mMeasureTarget = lastViewSeen;
         }
-        
+
         @Override
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
@@ -394,6 +396,7 @@ public class StickyGridHeadersBaseAdapterWrapper extends BaseAdapter {
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            mMeasureTarget.measure(widthMeasureSpec, heightMeasureSpec);
             heightMeasureSpec = MeasureSpec.makeMeasureSpec(mMeasureTarget.getMeasuredHeight(),
                     MeasureSpec.EXACTLY);
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -440,7 +443,7 @@ public class StickyGridHeadersBaseAdapterWrapper extends BaseAdapter {
 
         @Override
         protected LayoutParams generateDefaultLayoutParams() {
-            return new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            return new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         }
 
         @Override
@@ -451,10 +454,8 @@ public class StickyGridHeadersBaseAdapterWrapper extends BaseAdapter {
                 v.setLayoutParams(generateDefaultLayoutParams());
             }
             if (v.getVisibility() != View.GONE) {
-                if (v.getMeasuredHeight() == 0) {
-                    v.measure(MeasureSpec.makeMeasureSpec(mHeaderWidth, MeasureSpec.EXACTLY),
-                            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-                }
+                v.measure(MeasureSpec.makeMeasureSpec(mHeaderWidth, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
             }
             setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), v.getMeasuredHeight());
         }
